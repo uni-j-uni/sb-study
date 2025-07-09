@@ -34,7 +34,7 @@ public class SwaggerConfig {
                         .type(SecurityScheme.Type.HTTP)
                         .scheme("bearer")
                         .bearerFormat("JWT")))
-        .info(new Info().title("Swagger API 명세서").version("1.0").description("북마켓 토이 프로젝트"));
+        .info(new Info().title("Swagger API 명세서").version("1.0").description("SBS 프로젝트"));
   }
 
   @Bean
