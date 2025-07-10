@@ -64,6 +64,8 @@ jobs:
 
             # Run new container
             sudo docker run -d --name $CONTAINER_NAME \
+                -v /home/ubuntu/your-repo/submodule-config/application-prod.yml:/app/config/application-prod.yml \
+                -e SPRING_CONFIG_LOCATION=classpath:/application.yml,/app/config/application-prod.yml \
                 -p 8080:${{ secrets.SPRINGBOOT_PORT }} \
                 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
