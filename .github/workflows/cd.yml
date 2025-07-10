@@ -28,11 +28,11 @@ jobs:
         run: chmod +x gradlew
 
       - name: Copy application.properties from submodule
-        run: cp sb-study-config/application-dev.properties src/main/resources/application.properties
+        run: mkdir -p src/main/resources && cp sb-study-config/application-dev.properties src/main/resources/application.properties
 
       - name: Build with Gradle
         run: |
-          SPRING_PROFILES_ACTIVE=prod ./gradlew clean bootjar
+          ./gradlew clean bootjar
 
       - name: Docker build & push
         run: |
@@ -67,6 +67,8 @@ jobs:
 
             # Run new container
             sudo docker run -d --name $CONTAINER_NAME \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              -v /home/ubuntu/actions-runner/_work/sb-study/sb-study-config/application-dev.properties:/app/sb-study-config/application-dev.properties \
               -p 8080:${{ secrets.SPRINGBOOT_PORT }} \
               ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
