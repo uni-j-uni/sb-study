@@ -27,6 +27,9 @@ jobs:
       - name: Grant execute permission for Gradlew
         run: chmod +x gradlew
 
+      - name: Copy application.properties from submodule
+        run: cp sb-study-config/application-dev.properties src/main/resources/application.properties
+
       - name: Build with Gradle
         run: |
           SPRING_PROFILES_ACTIVE=prod ./gradlew clean bootjar
@@ -64,7 +67,6 @@ jobs:
 
             # Run new container
             sudo docker run -d --name $CONTAINER_NAME \
-              -v /home/ubuntu/actions-runner/_work/sb-study/sb-study-config/application-dev.properties:/app/config/application-dev.properties \
               -p 8080:${{ secrets.SPRINGBOOT_PORT }} \
               ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
