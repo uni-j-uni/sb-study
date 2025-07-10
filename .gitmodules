@@ -1,6 +1,3 @@
 [submodule "sb-study-config"]
 	path = sb-study-config
 	url = https://github.com/uni-j-uni/sb-study-config.git
-[submodule ".github/workflows"]
-	path = .github/workflows
-	url = https://github.com/uni-j-uni/sb-study-deploy.git
