@@ -30,7 +30,7 @@ jobs:
       - name: Create application.properties with config import
         run: |
           mkdir -p src/main/resources
-          echo 'spring.config.import=optional:file:sb-study-config/application-local.properties' > src/main/resources/application.properties
+          echo 'spring.config.import=optional:file:sb-study-config/application-dev.properties' > src/main/resources/application.properties
 
       - name: Build with Gradle
         run: |
