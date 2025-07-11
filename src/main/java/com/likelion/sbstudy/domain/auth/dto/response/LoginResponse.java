@@ -1,6 +1,7 @@
 package com.likelion.sbstudy.domain.auth.dto.response;
 
 import com.likelion.sbstudy.domain.user.entity.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

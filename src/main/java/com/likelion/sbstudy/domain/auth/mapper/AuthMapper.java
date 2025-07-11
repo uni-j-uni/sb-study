@@ -1,8 +1,9 @@
 package com.likelion.sbstudy.domain.auth.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.likelion.sbstudy.domain.auth.dto.response.LoginResponse;
 import com.likelion.sbstudy.domain.user.entity.User;
-import org.springframework.stereotype.Component;
 
 @Component
 public class AuthMapper {

@@ -1,8 +1,10 @@
 package com.likelion.sbstudy.domain.book.dto.response;
 
-import com.likelion.sbstudy.domain.book.entity.Category;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+
+import com.likelion.sbstudy.domain.book.entity.Category;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 

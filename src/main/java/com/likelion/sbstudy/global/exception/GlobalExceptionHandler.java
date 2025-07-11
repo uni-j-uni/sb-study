@@ -1,14 +1,17 @@
 package com.likelion.sbstudy.global.exception;
 
-import com.likelion.sbstudy.global.exception.model.BaseErrorCode;
-import com.likelion.sbstudy.global.response.BaseResponse;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.likelion.sbstudy.global.exception.model.BaseErrorCode;
+import com.likelion.sbstudy.global.response.BaseResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
@@ -19,8 +22,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<BaseResponse<Object>> handleCustomException(CustomException ex) {
     BaseErrorCode errorCode = ex.getErrorCode();
     log.error("Custom 오류 발생: {}", ex.getMessage());
-    return ResponseEntity
-        .status(errorCode.getStatus())
+    return ResponseEntity.status(errorCode.getStatus())
         .body(BaseResponse.error(errorCode.getStatus().value(), ex.getMessage()));
   }
 

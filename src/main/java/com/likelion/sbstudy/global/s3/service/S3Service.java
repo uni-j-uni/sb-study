@@ -1,5 +1,14 @@
 package com.likelion.sbstudy.global.s3.service;
 
+import java.io.ByteArrayInputStream;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
@@ -10,15 +19,9 @@ import com.likelion.sbstudy.global.exception.CustomException;
 import com.likelion.sbstudy.global.s3.dto.S3Response;
 import com.likelion.sbstudy.global.s3.entity.PathName;
 import com.likelion.sbstudy.global.s3.exception.S3ErrorCode;
-import java.io.ByteArrayInputStream;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -95,9 +98,9 @@ public class S3Service {
   public String createKeyName(PathName pathName) {
 
     return switch (pathName) {
-      case FOLDER1 -> s3Config.getFolder1Path();
-      case FOLDER2 -> s3Config.getFolder2Path();
-    }
+          case FOLDER1 -> s3Config.getFolder1Path();
+          case FOLDER2 -> s3Config.getFolder2Path();
+        }
         + '/'
         + UUID.randomUUID();
   }
@@ -125,10 +128,11 @@ public class S3Service {
   }
 
   public List<String> getAllFiles(PathName pathName) {
-    String prefix = switch (pathName) {
-      case FOLDER1 -> s3Config.getFolder1Path();
-      case FOLDER2 -> s3Config.getFolder2Path();
-    };
+    String prefix =
+        switch (pathName) {
+          case FOLDER1 -> s3Config.getFolder1Path();
+          case FOLDER2 -> s3Config.getFolder2Path();
+        };
 
     try {
       return amazonS3
@@ -145,10 +149,11 @@ public class S3Service {
   }
 
   public void deleteFile(PathName pathName, String fileName) {
-    String prefix = switch (pathName) {
-      case FOLDER1 -> s3Config.getFolder1Path();
-      case FOLDER2 -> s3Config.getFolder2Path();
-    };
+    String prefix =
+        switch (pathName) {
+          case FOLDER1 -> s3Config.getFolder1Path();
+          case FOLDER2 -> s3Config.getFolder2Path();
+        };
     String keyName = prefix + "/" + fileName;
     deleteFile(keyName);
   }

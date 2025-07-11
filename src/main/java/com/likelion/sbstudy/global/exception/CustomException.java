@@ -1,6 +1,7 @@
 package com.likelion.sbstudy.global.exception;
 
 import com.likelion.sbstudy.global.exception.model.BaseErrorCode;
+
 import lombok.Getter;
 
 @Getter

@@ -1,6 +1,7 @@
 package com.likelion.sbstudy.domain.book.entity;
 
-import com.likelion.sbstudy.global.common.BaseTimeEntity;
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,7 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
+
+import com.likelion.sbstudy.global.common.BaseTimeEntity;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,18 +1,21 @@
 package com.likelion.sbstudy.domain.user.controller;
 
-import com.likelion.sbstudy.domain.user.dto.request.SignUpRequest;
-import com.likelion.sbstudy.domain.user.dto.response.SignUpResponse;
-import com.likelion.sbstudy.domain.user.service.UserService;
-import com.likelion.sbstudy.global.response.BaseResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.likelion.sbstudy.domain.user.dto.request.SignUpRequest;
+import com.likelion.sbstudy.domain.user.dto.response.SignUpResponse;
+import com.likelion.sbstudy.domain.user.service.UserService;
+import com.likelion.sbstudy.global.response.BaseResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
