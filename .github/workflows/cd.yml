@@ -31,6 +31,11 @@ jobs:
         run: |
           ./gradlew clean bootjar
 
+      - name: Rename JAR file to app.jar
+        run: |
+          JAR_PATH=$(ls build/libs/*.jar | head -n 1)
+          mv "$JAR_PATH" build/libs/app.jar
+
       - name: Check built JAR file
         run: ls -lh build/libs
 
