@@ -31,6 +31,9 @@ jobs:
         run: |
           ./gradlew clean bootjar
 
+      - name: Check built JAR file
+        run: ls -lh build/libs
+
       - name: Create application-local.properties
         run: |
           mkdir -p sb-study-config
@@ -38,7 +41,7 @@ jobs:
 
       - name: Docker build & push
         run: |
-          docker buildx build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} --push .
+          docker buildx build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} --push .
 
 
   deploy:
