@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean bootjar
+        run: ./gradlew clean build
 
       - name: Rename JAR file to app.jar
         run: |
