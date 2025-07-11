@@ -1,9 +1,5 @@
 FROM eclipse-temurin:21-jdk
 
-WORKDIR /app
+COPY build/libs/*-SNAPSHOT.jar app.jar
 
-COPY sb-study/sb-study-config/application-dev.properties sb-study-config/application-dev.properties
-
-COPY build/libs/app.jar app.jar
-
-ENTRYPOINT ["java", "-Dspring.config.import=optional:file:sb-study-config/application-dev.properties", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
