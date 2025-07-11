@@ -1,4 +1,5 @@
 name: CD with Gradle
+
 on:
   push:
     branches:
@@ -8,13 +9,13 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: Checkout repository with submodules
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GIT_ACTION_TOKEN }}
           submodules: true
 
-      - name: Update submodule
+      - name: Update submodules
         run: git submodule update --remote
 
       - name: Set up JDK 21
@@ -23,28 +24,26 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Make application.properties
+        run: |
+          mkdir -p ./src/main/resources
+          cd ./src/main/resources
+          touch ./application.properties
+
+          echo "${{ secrets.APPLICATION_PROPERTIES }}" >> ./application.properties
+        shell: bash
+
       - name: Grant execute permission for Gradlew
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean bootjar
-
-      - name: Rename JAR file to app.jar
-        run: |
-          JAR_PATH=$(ls build/libs/*.jar | head -n 1)
-          mv "$JAR_PATH" build/libs/app.jar
-
-      - name: Check built JAR file
-        run: ls -lh build/libs
-
-      - name: Decode and create application-dev.properties
-        run: |
-          mkdir -p sb-study/sb-study-config
-          echo "${{ secrets.APPLICATION_PROPERTIES_BASE64 }}" | base64 -d > sb-study/sb-study-config/application-dev.properties
+        run: ./gradlew clean bootJar
 
       - name: Docker build & push
         run: |
-          docker buildx build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} --push .
+          docker buildx build --platform linux/arm64 \
+            -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} \
+            --push .
 
   deploy:
     runs-on: self-hosted
@@ -61,18 +60,11 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e
-            CONTAINER_NAME=sb-study
-
-            echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
-
-            sudo docker rm -f $CONTAINER_NAME || true
-
-            sudo docker run -d --name $CONTAINER_NAME \
-              -p 8080:${{ secrets.SPRINGBOOT_PORT }} \
-              -v /home/ubuntu/sb-study-config:/app/sb-study-config \
-              -e SPRING_CONFIG_IMPORT=optional:file:/app/sb-study-config/application-dev.properties \
+            sudo docker rm -f sb-study-container || true
+            sudo docker run -d --name sb-study-container \
+              -p ${{ secrets.SPRINGBOOT_PORT }}:${{ secrets.SPRINGBOOT_PORT }} \
+              -v /home/ubuntu/app/config:/config \
               ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
             sudo docker image prune -f
