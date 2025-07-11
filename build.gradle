@@ -64,6 +64,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+tasks.named('compileJava') {
+    dependsOn 'spotlessApply'
+}
+
 spotless {
     java {
         // Google JAVA Format 적용
@@ -76,5 +80,22 @@ spotless {
         trimTrailingWhitespace()
         // 파일 끝에 새로운 라인 추가
         endWithNewline()
+    }
+}
+
+processResources {
+    dependsOn 'copyResources'
+}
+
+tasks.register('copyResources', Copy) {
+    from './sb-study-config'
+    include '*.properties'
+    into 'src/main/resources/'
+}
+
+test {
+    doFirst {
+        def profile = project.hasProperty('profile') ? project.property('profile').toString() : 'local'
+        jvmArgs = ["-Dspring.profiles.active=${profile}"]
     }
 }
