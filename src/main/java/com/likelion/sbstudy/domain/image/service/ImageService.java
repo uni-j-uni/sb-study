@@ -1,10 +1,5 @@
 package com.likelion.sbstudy.domain.image.service;
 
-import com.likelion.sbstudy.domain.image.dto.response.ImageResponse;
-import com.likelion.sbstudy.domain.image.entity.Image;
-import com.likelion.sbstudy.domain.image.mapper.ImageMapper;
-import com.likelion.sbstudy.domain.image.repository.ImageRepository;
-import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,12 +8,21 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.likelion.sbstudy.domain.image.dto.response.ImageResponse;
+import com.likelion.sbstudy.domain.image.entity.Image;
+import com.likelion.sbstudy.domain.image.mapper.ImageMapper;
+import com.likelion.sbstudy.domain.image.repository.ImageRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -56,8 +60,7 @@ public class ImageService {
 
     // 이미지가 없는 경우 기본 이미지 사용
     if (images == null || images.isEmpty()) {
-      Image defaultImage =
-          createAndSaveImage(defaultName, defaultName);
+      Image defaultImage = createAndSaveImage(defaultName, defaultName);
       imageList.add(defaultImage);
 
       return imageMapper.toImageResponse(imageList);
@@ -92,15 +95,12 @@ public class ImageService {
     }
 
     if (imageList.isEmpty()) {
-      Image defaultImage =
-          createAndSaveImage(defaultName, defaultName);
+      Image defaultImage = createAndSaveImage(defaultName, defaultName);
 
       imageList.add(defaultImage);
     }
 
-    log.info(
-        "Uploaded ProjectImage: {}",
-        imageList.stream().map(Image::getImageUrl).toList());
+    log.info("Uploaded ProjectImage: {}", imageList.stream().map(Image::getImageUrl).toList());
 
     return imageMapper.toImageResponse(imageList);
   }
@@ -121,8 +121,10 @@ public class ImageService {
   }
 
   private String createUniqueFileName(String originalFilename, int index) {
-    String extension = originalFilename.contains(".") ? originalFilename.substring(
-        originalFilename.lastIndexOf(".")) : "";
+    String extension =
+        originalFilename.contains(".")
+            ? originalFilename.substring(originalFilename.lastIndexOf("."))
+            : "";
     String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
     return String.format(
@@ -132,12 +134,10 @@ public class ImageService {
         extension); // 확장자
   }
 
-  private Image createAndSaveImage(
-      String fileName, String originalFileName) {
+  private Image createAndSaveImage(String fileName, String originalFileName) {
     // 클라이언트 접근용 URL 생성
     String fullImageUrl = uploadUrl + "/" + fileName;
-    return imageRepository.save(
-        new Image(null, fullImageUrl, originalFileName));
+    return imageRepository.save(new Image(null, fullImageUrl, originalFileName));
   }
 
   @Transactional

@@ -1,13 +1,7 @@
 package com.likelion.sbstudy.global.s3.controller;
 
-import com.likelion.sbstudy.global.response.BaseResponse;
-import com.likelion.sbstudy.global.s3.dto.S3Response;
-import com.likelion.sbstudy.global.s3.entity.PathName;
-import com.likelion.sbstudy.global.s3.service.S3Service;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.likelion.sbstudy.global.response.BaseResponse;
+import com.likelion.sbstudy.global.s3.dto.S3Response;
+import com.likelion.sbstudy.global.s3.entity.PathName;
+import com.likelion.sbstudy.global.s3.service.S3Service;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,8 +49,7 @@ public class S3Controller {
   @Operation(summary = "S3 파일 삭제 API", description = "파일명을 기반으로 이미지를 삭제합니다.")
   @DeleteMapping("/{pathName}/{fileName}")
   public ResponseEntity<BaseResponse<String>> deleteFile(
-      @PathVariable PathName pathName,
-      @PathVariable String fileName) {
+      @PathVariable PathName pathName, @PathVariable String fileName) {
     s3Service.deleteFile(pathName, fileName);
     return ResponseEntity.ok(BaseResponse.success("파일 삭제에 성공했습니다."));
   }

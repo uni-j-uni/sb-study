@@ -1,5 +1,12 @@
 package com.likelion.sbstudy.domain.auth.service;
 
+import java.util.UUID;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.likelion.sbstudy.domain.auth.dto.request.LoginRequest;
 import com.likelion.sbstudy.domain.auth.dto.response.LoginResponse;
 import com.likelion.sbstudy.domain.auth.mapper.AuthMapper;
@@ -8,13 +15,9 @@ import com.likelion.sbstudy.domain.user.exception.UserErrorCode;
 import com.likelion.sbstudy.domain.user.repository.UserRepository;
 import com.likelion.sbstudy.global.exception.CustomException;
 import com.likelion.sbstudy.global.jwt.JwtProvider;
-import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -28,22 +31,23 @@ public class AuthService {
 
   @Transactional
   public LoginResponse login(LoginRequest loginRequest) {
-    User user = userRepository.findByUsername(loginRequest.getUsername())
-        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+    User user =
+        userRepository
+            .findByUsername(loginRequest.getUsername())
+            .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
     UsernamePasswordAuthenticationToken authenticationToken =
-        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-            loginRequest.getPassword());
+        new UsernamePasswordAuthenticationToken(
+            loginRequest.getUsername(), loginRequest.getPassword());
 
     // 인증 처리
     authenticationManager.authenticate(authenticationToken);
 
     // 액세스 토큰 및 리프레시 토큰 발급
-    String accessToken = jwtProvider.createAccessToken(user.getUsername(),
-        user.getRole().toString(),
-        "custom");
-    String refreshToken = jwtProvider.createRefreshToken(user.getUsername(),
-        UUID.randomUUID().toString());
+    String accessToken =
+        jwtProvider.createAccessToken(user.getUsername(), user.getRole().toString(), "custom");
+    String refreshToken =
+        jwtProvider.createRefreshToken(user.getUsername(), UUID.randomUUID().toString());
 
     // 리프레시 토큰 저장
     user.createRefreshToken(refreshToken);

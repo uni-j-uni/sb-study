@@ -1,9 +1,5 @@
 package com.likelion.sbstudy.global.config;
 
-import com.likelion.sbstudy.global.security.CustomOAuth2UserService;
-import com.likelion.sbstudy.global.security.JwtAuthenticationFilter;
-import com.likelion.sbstudy.global.security.OAuth2LoginSuccessHandler;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +13,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.likelion.sbstudy.global.security.CustomOAuth2UserService;
+import com.likelion.sbstudy.global.security.JwtAuthenticationFilter;
+import com.likelion.sbstudy.global.security.OAuth2LoginSuccessHandler;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -54,26 +56,24 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .oauth2Login(oauth2 -> oauth2
-            .userInfoEndpoint(userInfo -> userInfo
-                .userService(oauth2UserService) // 사용자 정보 처리
-            )
-            .successHandler(customSuccessHandler) // 로그인 성공 처리
-        );
+        .oauth2Login(
+            oauth2 ->
+                oauth2
+                    .userInfoEndpoint(
+                        userInfo -> userInfo.userService(oauth2UserService) // 사용자 정보 처리
+                        )
+                    .successHandler(customSuccessHandler) // 로그인 성공 처리
+            );
     return http.build();
   }
 
-  /**
-   * 비밀번호 인코더 Bean 등록
-   **/
+  /** 비밀번호 인코더 Bean 등록 */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
-  /**
-   * 인증 관리자 Bean 등록
-   **/
+  /** 인증 관리자 Bean 등록 */
   @Bean
   public AuthenticationManager authenticationManager(
       AuthenticationConfiguration authenticationConfiguration) throws Exception {

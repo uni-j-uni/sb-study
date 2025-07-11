@@ -1,7 +1,5 @@
 package com.likelion.sbstudy.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.likelion.sbstudy.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.likelion.sbstudy.global.common.BaseTimeEntity;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +32,7 @@ public class User extends BaseTimeEntity {
 
   @Column(name = "username", nullable = false, unique = true)
   private String username;
-  
+
   @JsonIgnore
   @Column(name = "password")
   private String password;
@@ -52,10 +54,6 @@ public class User extends BaseTimeEntity {
   }
 
   public static User fromOAuth(String email, String provider) {
-    return User.builder()
-        .username(email)
-        .provider(provider)
-        .role(Role.USER)
-        .build();
+    return User.builder().username(email).provider(provider).role(Role.USER).build();
   }
 }
