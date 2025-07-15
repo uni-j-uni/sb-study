@@ -83,19 +83,4 @@ spotless {
     }
 }
 
-processResources {
-    dependsOn 'copyResources'
-}
-
-tasks.register('copyResources', Copy) {
-    from './sb-study-config'
-    include '*.properties'
-    into 'src/main/resources/'
-}
-
-test {
-    doFirst {
-        def profile = project.hasProperty('profile') ? project.property('profile').toString() : 'local'
-        jvmArgs = ["-Dspring.profiles.active=${profile}"]
-    }
-}
+def springProfile = project.findProperty("spring.profiles.active") ?: ""
