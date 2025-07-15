@@ -1,4 +1,4 @@
-name: CI with Gradle
+name: CI
 
 on:
   pull_request:
@@ -10,76 +10,51 @@ permissions:
   pull-requests: write
 
 jobs:
-  build-test:
+  spotless:
+    name: Code Style Check
     runs-on: ubuntu-latest
 
     steps:
-      - name: Git checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GIT_ACTION_TOKEN }}
-          submodules: true
-
-      - name: Update submodule
-        run: git submodule update --remote
-
-      - name: Filtering changes
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            application:
-            - 'build.gradle'
-            - 'src/**'
+          fetch-depth: 0
 
       - name: Set up JDK 21
-        if: steps.changes.outputs.application == 'true'
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Setup Gradle with cache
-        if: steps.changes.outputs.application == 'true'
-        uses: gradle/actions/setup-gradle@v3
+          java-version: "21"
+          distribution: "temurin"
+          cache: gradle
 
       - name: Grant execute permission for gradlew
-        if: steps.changes.outputs.application == 'true'
         run: chmod +x gradlew
 
-      - name: Build with Gradle Wrapper
-        if: steps.changes.outputs.application == 'true'
-        run: ./gradlew clean build
-        env:
-          SPRING_PROFILES_ACTIVE: dev
+      - name: Check code style with Spotless
+        run: ./gradlew spotlessCheck
 
-  code-style:
-    runs-on: ubuntu-latest
+  build:
+    name: Build
+    needs: spotless
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Git checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Filtering changes
-        uses: dorny/paths-filter@v2
-        id: changes
         with:
-          filters: |
-            application:
-            - 'build.gradle'
-            - 'src/**'  
+          fetch-depth: 0
+          submodules: true
+          token: ${{ secrets.GIT_ACTION_TOKEN }}
 
       - name: Set up JDK 21
-        if: steps.changes.outputs.application == 'true'
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
+          cache: gradle
 
-      - name: Setup Gradle with cache
-        if: steps.changes.outputs.application == 'true'
-        uses: gradle/actions/setup-gradle@v3
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Style check
-        if: steps.changes.outputs.application == 'true'
-        run: ./gradlew spotlessCheck --console=plain
+      - name: Build with Gradle
+        run: ./gradlew build -x test

@@ -1,5 +1,22 @@
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jdk AS build
 
-COPY build/libs/*-SNAPSHOT.jar app.jar
+# 작업 위치
+WORKDIR /app
 
-ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=dev", "-jar", "app.jar"]
+# 소스 코드 복사
+COPY . .
+
+# 실행 권한 부여
+RUN chmod +x ./gradlew
+
+# 프로젝트 빌드
+RUN ./gradlew build -x test
+
+# 빌드 이미지에서 JAR 파일 복사
+COPY --from=build /app/build/libs/*.jar app.jar
+
+# 포트 노출
+EXPOSE 8080
+
+# 애플리케이션 실행
+ENTRYPOINT ["java", "-jar", "app.jar"]
