@@ -40,19 +40,18 @@ jobs:
 
       - name: Deploy on server
         uses: appleboy/ssh-action@master
-        env:
-          PROFILE: ${{ needs.build.outputs.profile }}
-          ENV: ${{ secrets.ENV }}
         with:
-          envs: PROFILE,ENV
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: |
+            PROFILE=${{ needs.build.outputs.profile }}
+            ENV=${{ secrets.ENV }}
           script: |
             cd /home/ubuntu/actions-runner/_work/sb-study/sb-study/docker
-            echo "$ENV" > ./.env
-            echo "PROFILE=dev" >> ./.env 
+            echo "ENV=$ENV" > ./.env
+            echo "PROFILE=$PROFILE" >> ./.env
 
             # 블루/그린 현재 활성 컨테이너 확인
             if docker ps --filter "name=app-blue" --filter "status=running" | grep app-blue > /dev/null; then
