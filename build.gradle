@@ -82,5 +82,3 @@ spotless {
         endWithNewline()
     }
 }
-
-def springProfile = project.findProperty("spring.profiles.active") ?: ""
