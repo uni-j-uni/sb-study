@@ -1,7 +1,7 @@
 # Blue 환경용 앱 컨테이너 Compose 파일
 services:
   app-blue:
-    image: unijuni/sbs:latest
+    image: unijuni/sb-study:latest
     container_name: sbs-app-blue
     ports:
       - "8080:8080"

@@ -1,7 +1,7 @@
 # Green 환경용 앱 컨테이너 Compose 파일
 services:
   app-green:
-    image: unijuni/sbs:latest
+    image: unijuni/sb-study:latest
     container_name: sbs-app-green
     ports:
       - "8081:8080"
