@@ -48,6 +48,6 @@ public class AuthController {
     // Set-Cookie 설정 (HttpOnly + Secure)
     jwtProvider.addJwtToCookie(response, refreshToken, "refreshToken", 60 * 60 * 24 * 7);
 
-    return ResponseEntity.ok(BaseResponse.success("로그인에 성공했습니다.", loginResponse));
+    return ResponseEntity.ok(BaseResponse.success(200, "로그인에 성공했습니다.", loginResponse));
   }
 }

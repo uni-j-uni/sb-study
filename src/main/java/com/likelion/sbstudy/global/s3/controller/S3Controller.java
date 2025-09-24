@@ -36,14 +36,14 @@ public class S3Controller {
       @RequestParam PathName pathName, MultipartFile file) {
 
     S3Response s3Response = s3Service.uploadImage(pathName, file);
-    return ResponseEntity.ok(BaseResponse.success("이미지 업로드에 성공했습니다.", s3Response));
+    return ResponseEntity.ok(BaseResponse.success(201, "이미지 업로드에 성공했습니다.", s3Response));
   }
 
   @Operation(summary = "S3 파일 전체 조회 API", description = "해당 경로의 모든 파일 목록을 조회합니다.")
   @GetMapping("/image-list")
   public ResponseEntity<BaseResponse<List<String>>> listFiles(@RequestParam PathName pathName) {
     List<String> files = s3Service.getAllFiles(pathName);
-    return ResponseEntity.ok(BaseResponse.success("파일 목록 조회에 성공했습니다.", files));
+    return ResponseEntity.ok(BaseResponse.success(200, "파일 목록 조회에 성공했습니다.", files));
   }
 
   @Operation(summary = "S3 파일 삭제 API", description = "파일명을 기반으로 이미지를 삭제합니다.")

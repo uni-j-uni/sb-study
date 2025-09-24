@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.4'
+    id 'org.springframework.boot' version '3.5.4'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.diffplug.spotless' version '6.19.0'
 }
@@ -80,5 +80,17 @@ spotless {
         trimTrailingWhitespace()
         // 파일 끝에 새로운 라인 추가
         endWithNewline()
+    }
+}
+
+def profile = project.findProperty("profile") ?: "dev"
+
+bootRun {
+    systemProperty "spring.profiles.active", profile
+}
+
+tasks.named('bootJar') {
+    doFirst {
+        println ">>> Building with Spring profile: $profile"
     }
 }

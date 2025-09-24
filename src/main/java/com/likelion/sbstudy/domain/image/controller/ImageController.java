@@ -39,6 +39,6 @@ public class ImageController {
           @RequestPart(value = "images")
           List<MultipartFile> images) {
     ImageResponse response = imageService.uploadImages(images);
-    return ResponseEntity.ok(BaseResponse.success("이미지 등록에 성공하였습니다.", response));
+    return ResponseEntity.ok(BaseResponse.success(201, "이미지 등록에 성공하였습니다.", response));
   }
 }

@@ -30,6 +30,6 @@ public class UserController {
   public ResponseEntity<BaseResponse<SignUpResponse>> signUp(
       @RequestBody @Valid SignUpRequest signUpRequest) {
     SignUpResponse signUpResponse = userService.signUp(signUpRequest);
-    return ResponseEntity.ok(BaseResponse.success("회원가입에 성공했습니다.", signUpResponse));
+    return ResponseEntity.ok(BaseResponse.success(201, "회원가입에 성공했습니다.", signUpResponse));
   }
 }

@@ -1,9 +1,5 @@
 package com.likelion.sbstudy.domain.book.dto.request;
 
-import java.util.List;
-
-import com.likelion.sbstudy.domain.book.entity.Category;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +26,4 @@ public class CreateBookRequest {
 
   @Schema(description = "출간날짜", example = "2025년 3월 22일")
   private String releaseDate;
-
-  @Schema(description = "카테고리")
-  private List<Category> categoryList;
 }
