@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.likelion.sbstudy.domain.book.dto.request.CreateBookRequest;
 import com.likelion.sbstudy.domain.book.dto.response.BookResponse;
 import com.likelion.sbstudy.domain.book.entity.Category;
+import com.likelion.sbstudy.global.page.response.InfiniteResponse;
+import com.likelion.sbstudy.global.page.response.PageResponse;
 import com.likelion.sbstudy.global.response.BaseResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,6 +60,25 @@ public interface BookController {
   @GetMapping("/{id}")
   ResponseEntity<BaseResponse<BookResponse>> getBook(
       @Parameter(description = "조회할 책 ID", example = "1") @PathVariable Long id);
+
+  @Operation(summary = "책 페이지 조회", description = "정렬 기준에 맞춰 책 페이지 정보를 조회합니다.")
+  @GetMapping("/page")
+  ResponseEntity<BaseResponse<PageResponse<BookResponse>>> getBookPageByCategory(
+      @Parameter(description = "정렬 기준", example = "NOVEL") @RequestParam Category category,
+      @Parameter(description = "페이지 번호", example = "1") @RequestParam(defaultValue = "1")
+          Integer pageNum,
+      @Parameter(description = "페이지 크기", example = "3") @RequestParam(defaultValue = "4")
+          Integer pageSize);
+
+  @Operation(summary = "책 인피니티 스크롤 조회", description = "마지막으로 조회한 책 식별자 이후의 책 목록을 조회합니다.")
+  @GetMapping("/infinite")
+  ResponseEntity<BaseResponse<InfiniteResponse<BookResponse>>> getBooksByCategoryInfinite(
+      @Parameter(description = "조회 기준 카테고리", example = "NOVEL") @RequestParam Category category,
+      @Parameter(description = "마지막으로 조회한 책 식별자(첫 조회 시 생략)", example = "3")
+          @RequestParam(required = false)
+          Long lastBookId,
+      @Parameter(description = "한 번에 조회할 책 개수", example = "3") @RequestParam(defaultValue = "3")
+          Integer size);
 
   @Operation(summary = "책 수정", description = "책 정보를 수정하고 수정된 정보를 반환합니다.")
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

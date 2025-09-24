@@ -3,6 +3,10 @@ package com.likelion.sbstudy.domain.book.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,9 +17,13 @@ import com.likelion.sbstudy.domain.book.entity.Book;
 import com.likelion.sbstudy.domain.book.entity.BookImage;
 import com.likelion.sbstudy.domain.book.entity.Category;
 import com.likelion.sbstudy.domain.book.exception.BookErrorCode;
-import com.likelion.sbstudy.domain.book.mapper.BookMapper;
+import com.likelion.sbstudy.domain.book.mapping.BookMapper;
 import com.likelion.sbstudy.domain.book.repository.BookRepository;
 import com.likelion.sbstudy.global.exception.CustomException;
+import com.likelion.sbstudy.global.page.mapper.InfiniteMapper;
+import com.likelion.sbstudy.global.page.mapper.PageMapper;
+import com.likelion.sbstudy.global.page.response.InfiniteResponse;
+import com.likelion.sbstudy.global.page.response.PageResponse;
 import com.likelion.sbstudy.global.s3.entity.PathName;
 import com.likelion.sbstudy.global.s3.service.S3Service;
 
@@ -30,6 +38,8 @@ public class BookServiceImpl implements BookService {
   private final BookRepository bookRepository;
   private final S3Service s3Service;
   private final BookMapper bookMapper;
+  private final PageMapper pageMapper;
+  private final InfiniteMapper infiniteMapper;
 
   @Override
   @Transactional
@@ -62,7 +72,7 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public BookResponse getBook(Long id) {
 
     Book book =
@@ -80,6 +90,53 @@ public class BookServiceImpl implements BookService {
 
     log.info("책 전체 조회 성공: count={}", bookRepository.count());
     return bookRepository.findAll().stream().map(bookMapper::toBookResponse).toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PageResponse<BookResponse> getBookPageByCategory(Category category, Pageable pageable) {
+
+    Page<BookResponse> bookPage =
+        bookRepository
+            .findAllByCategoryListContaining(category, pageable)
+            .map(bookMapper::toBookResponse);
+
+    log.info(
+        "책 페이지 조회 성공: category={}, pageNumber={}, totalElements={}",
+        category,
+        pageable.getPageNumber(),
+        bookPage.getTotalElements());
+    return pageMapper.toBookPageResponse(bookPage);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public InfiniteResponse<BookResponse> getBooksByCategoryInfinite(
+      Category category, Long lastBookId, Integer size) {
+
+    Pageable pageable = PageRequest.of(0, size + 1, Sort.by(Sort.Direction.DESC, "id"));
+    List<Book> books;
+
+    if (lastBookId == null) {
+      books = bookRepository.findAllByCategoryListContaining(category, pageable).getContent();
+    } else {
+      books =
+          bookRepository
+              .findAllByCategoryListContainingAndIdLessThan(category, lastBookId, pageable)
+              .getContent();
+    }
+
+    boolean hasNext = books.size() > size;
+    if (hasNext) {
+      books = books.subList(0, size);
+    }
+
+    List<BookResponse> bookResponseList = books.stream().map(bookMapper::toBookResponse).toList();
+
+    Long newLastCursor = books.isEmpty() ? null : books.getLast().getId();
+
+    log.info("책 인피니티 스크롤 조회 성공: category={}, lastBookId={}, size={}", category, lastBookId, size);
+    return infiniteMapper.toBookInfiniteResponse(bookResponseList, newLastCursor, hasNext, size);
   }
 
   @Override

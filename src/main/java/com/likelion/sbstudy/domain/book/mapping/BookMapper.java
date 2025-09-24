@@ -1,4 +1,4 @@
-package com.likelion.sbstudy.domain.book.mapper;
+package com.likelion.sbstudy.domain.book.mapping;
 
 import org.springframework.stereotype.Component;
 
